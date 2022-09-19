@@ -370,12 +370,10 @@ internal class BetterPlayer(
     ): MediaSource {
         val type: Int
         if (formatHint == null) {
-            var lastPathSegment = uri.lastPathSegment
-            if (lastPathSegment == null) {
-                lastPathSegment = ""
-            }
-            type = Util.inferContentTypeForExtension(lastPathSegment)
-            Log.e("lastPathSegment", lastPathSegment)
+            val fileExtension = '.' + uri.lastPathSegment?.substringAfterLast('.').toString()
+
+            type = Util.inferContentTypeForExtension(fileExtension)
+            Log.e("fileExtension", fileExtension)
         } else {
             type = when (formatHint) {
                 FORMAT_SS -> C.CONTENT_TYPE_SS
@@ -399,15 +397,6 @@ internal class BetterPlayer(
             drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager }
         }
 
-        Log.e("drmSessionManager", drmSessionManagerProvider.toString())
-
-        if (drmSessionManagerProvider == null) {
-            return ProgressiveMediaSource.Factory(
-                mediaDataSourceFactory,
-                DefaultExtractorsFactory()
-            )
-                .createMediaSource(mediaItem)
-        }
         return when (type) {
             C.CONTENT_TYPE_SS -> SsMediaSource.Factory(
                 DefaultSsChunkSource.Factory(mediaDataSourceFactory),
