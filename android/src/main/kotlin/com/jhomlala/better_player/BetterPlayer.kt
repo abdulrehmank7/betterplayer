@@ -370,7 +370,7 @@ internal class BetterPlayer(
     ): MediaSource {
         val type: Int
         if (formatHint == null) {
-            val fileExtension = '.' + uri.lastPathSegment?.substringAfterLast('.').toString()
+            val fileExtension = uri.lastPathSegment?.substringAfterLast('.').toString()
 
             type = Util.inferContentTypeForExtension(fileExtension)
             Log.e("fileExtension", fileExtension)
@@ -384,7 +384,6 @@ internal class BetterPlayer(
             }
         }
         Log.e("type", type.toString())
-        Log.e("formatHint", formatHint.toString())
 
         val mediaItemBuilder = MediaItem.Builder()
         mediaItemBuilder.setUri(uri)
@@ -397,32 +396,29 @@ internal class BetterPlayer(
             drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager }
         }
 
-        return when (type) {
+        val mediaSourceFactory = when (type) {
             C.CONTENT_TYPE_SS -> SsMediaSource.Factory(
                 DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                 DefaultDataSource.Factory(context, mediaDataSourceFactory)
             )
-                .setDrmSessionManagerProvider(drmSessionManagerProvider!!)
-                .createMediaSource(mediaItem)
             C.CONTENT_TYPE_DASH -> DashMediaSource.Factory(
                 DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                 DefaultDataSource.Factory(context, mediaDataSourceFactory)
             )
-                .setDrmSessionManagerProvider(drmSessionManagerProvider!!)
-                .createMediaSource(mediaItem)
             C.CONTENT_TYPE_HLS -> HlsMediaSource.Factory(mediaDataSourceFactory)
-                .setDrmSessionManagerProvider(drmSessionManagerProvider!!)
-                .createMediaSource(mediaItem)
             C.CONTENT_TYPE_OTHER -> ProgressiveMediaSource.Factory(
                 mediaDataSourceFactory,
                 DefaultExtractorsFactory()
             )
-                .setDrmSessionManagerProvider(drmSessionManagerProvider!!)
-                .createMediaSource(mediaItem)
             else -> {
                 throw IllegalStateException("Unsupported type: $type")
             }
         }
+
+        if (drmSessionManagerProvider != null) {
+            mediaSourceFactory.setDrmSessionManagerProvider(drmSessionManagerProvider!!)
+        }
+        return mediaSourceFactory.createMediaSource(mediaItem)
     }
 
     private fun setupVideoPlayer(
