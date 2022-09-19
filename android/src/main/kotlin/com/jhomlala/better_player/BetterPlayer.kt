@@ -374,7 +374,8 @@ internal class BetterPlayer(
             if (lastPathSegment == null) {
                 lastPathSegment = ""
             }
-            type = Util.inferContentType(lastPathSegment)
+            type = Util.inferContentTypeForExtension(lastPathSegment)
+            println("lastPathSegment $lastPathSegment")
         } else {
             type = when (formatHint) {
                 FORMAT_SS -> C.CONTENT_TYPE_SS
@@ -384,6 +385,9 @@ internal class BetterPlayer(
                 else -> -1
             }
         }
+        println(type)
+        println("formatHint $formatHint")
+
         val mediaItemBuilder = MediaItem.Builder()
         mediaItemBuilder.setUri(uri)
         if (cacheKey != null && cacheKey.isNotEmpty()) {
