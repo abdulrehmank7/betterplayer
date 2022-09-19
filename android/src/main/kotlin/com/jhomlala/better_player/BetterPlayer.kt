@@ -375,7 +375,7 @@ internal class BetterPlayer(
                 lastPathSegment = ""
             }
             type = Util.inferContentTypeForExtension(lastPathSegment)
-            println("lastPathSegment $lastPathSegment")
+            Log.e("lastPathSegment", lastPathSegment)
         } else {
             type = when (formatHint) {
                 FORMAT_SS -> C.CONTENT_TYPE_SS
@@ -385,8 +385,8 @@ internal class BetterPlayer(
                 else -> -1
             }
         }
-        println(type)
-        println("formatHint $formatHint")
+        Log.e("type", type.toString())
+        Log.e("formatHint", formatHint.toString())
 
         val mediaItemBuilder = MediaItem.Builder()
         mediaItemBuilder.setUri(uri)
@@ -398,6 +398,9 @@ internal class BetterPlayer(
         drmSessionManager?.let { drmSessionManager ->
             drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager }
         }
+
+        Log.e("drmSessionManager", drmSessionManagerProvider.toString())
+
         if (drmSessionManagerProvider == null) {
             return ProgressiveMediaSource.Factory(
                 mediaDataSourceFactory,
