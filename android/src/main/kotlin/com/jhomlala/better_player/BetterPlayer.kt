@@ -368,14 +368,11 @@ internal class BetterPlayer(
         cacheKey: String?,
         context: Context
     ): MediaSource {
-        val type: Int
-        if (formatHint == null) {
+        val type: Int = if (formatHint == null) {
             val fileExtension = uri.lastPathSegment?.substringAfterLast('.').toString()
-
-            type = Util.inferContentTypeForExtension(fileExtension)
-            Log.e("fileExtension", fileExtension)
+            Util.inferContentTypeForExtension(fileExtension)
         } else {
-            type = when (formatHint) {
+            when (formatHint) {
                 FORMAT_SS -> C.CONTENT_TYPE_SS
                 FORMAT_DASH -> C.CONTENT_TYPE_DASH
                 FORMAT_HLS -> C.CONTENT_TYPE_HLS
@@ -383,7 +380,6 @@ internal class BetterPlayer(
                 else -> -1
             }
         }
-        Log.e("type", type.toString())
 
         val mediaItemBuilder = MediaItem.Builder()
         mediaItemBuilder.setUri(uri)
