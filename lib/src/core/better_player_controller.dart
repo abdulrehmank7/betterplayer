@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -209,6 +210,14 @@ class BetterPlayerController {
 
   ///Currently displayed [BetterPlayerSubtitle].
   BetterPlayerSubtitle? renderedSubtitle;
+
+  Duration? get videoDuration {
+    return videoPlayerController?.value.duration;
+  }
+
+  Duration? get videoPosition {
+    return videoPlayerController?.value.position;
+  }
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
